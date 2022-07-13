@@ -6,6 +6,13 @@ fn linspace(start: f64, stop: f64, num: usize) -> impl Iterator<Item = f64> {
     (0..num).map(move |n| start + (interval * n as f64))
 }
 
+fn interval(a: f64, b: f64, n: usize, s: usize, r: usize) -> (f64, f64, usize) {
+    let a = a + (b / s as f64) * r as f64;
+    let b = a + (b / s as f64);
+    let n = n / s;
+    (a, b, n)
+}
+
 fn trapz<F>(f: F, a: f64, b: f64, n: usize) -> f64
 where
     F: Fn(f64) -> f64,
@@ -21,6 +28,9 @@ where
 fn main() {
     let t = trapz(|x| x * x, 0., 1., 100);
     println!("{}", t);
+
+    let i = interval(0., 1., 100, 4, 3);
+    println!("{:#?}", i);
 
     // ***
     let (tx, rx) = channel();
