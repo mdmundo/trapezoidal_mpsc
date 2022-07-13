@@ -21,8 +21,7 @@ where
     let y: f64 = x.map(&f).sum();
     let y = (y * 2.) - f(a) - f(b);
     let dx = (b - a) / n as f64;
-    let t = (dx / 2.) * y;
-    t
+    (dx / 2.) * y
 }
 
 fn main() {
