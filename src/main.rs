@@ -36,9 +36,6 @@ fn main() {
             tx.send(t).unwrap();
         });
     }
-    let mut res = 0.0f64;
-    for _ in 0..threads {
-        res += rx.recv().unwrap();
-    }
+    let res: f64 = (0..threads).map(|_| rx.recv().unwrap()).sum();
     println!("{}", res);
 }
