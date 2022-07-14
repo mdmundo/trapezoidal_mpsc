@@ -25,24 +25,20 @@ where
 }
 
 fn main() {
-    let (a, b, n) = (0.0f64, 1.0f64, 100usize);
-
+    let (a, b, n) = (0.0f64, 100000.0f64, 1000000usize);
     let threads = 8usize;
-    // ***
     let (tx, rx) = channel();
     for i in 0..threads {
         let tx = tx.clone();
         thread::spawn(move || {
             let (a, b, n) = interval(a, b, n, threads, i);
-            let t = trapz(|x| x * x, a, b, n);
+            let t = trapz(|x| 5. * x.powi(3) + 3. * x.powi(2) + 4. * x + 20., a, b, n);
             tx.send(t).unwrap();
         });
     }
-
     let mut res = 0.0f64;
     for _ in 0..threads {
         res += rx.recv().unwrap();
     }
-
     println!("{}", res);
 }
