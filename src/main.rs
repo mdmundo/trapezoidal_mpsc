@@ -25,23 +25,24 @@ where
 }
 
 fn main() {
-    let t = trapz(|x| x * x, 0., 1., 100);
-    println!("{}", t);
+    let (a, b, n) = (0.0f64, 1.0f64, 100usize);
 
-    let i = interval(0., 1., 100, 4, 3);
-    println!("{:#?}", i);
-
+    let threads = 8usize;
     // ***
     let (tx, rx) = channel();
-    for i in 0..10 {
+    for i in 0..threads {
         let tx = tx.clone();
         thread::spawn(move || {
-            tx.send(i).unwrap();
+            let (a, b, n) = interval(a, b, n, threads, i);
+            let t = trapz(|x| x * x, a, b, n);
+            tx.send(t).unwrap();
         });
     }
 
-    for _ in 0..10 {
-        let j = rx.recv().unwrap();
-        assert!((0..10).contains(&j));
+    let mut res = 0.0f64;
+    for _ in 0..threads {
+        res += rx.recv().unwrap();
     }
+
+    println!("{}", res);
 }
